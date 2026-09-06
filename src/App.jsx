@@ -6,7 +6,15 @@ import {
 
 import { Toaster } from 'react-hot-toast';
 
+// =========================
+// CUSTOMER LAYOUT
+// =========================
+
 import CustomerLayout from './components/layout/CustomerLayout';
+
+// =========================
+// CUSTOMER PAGES
+// =========================
 
 import Home from './pages/Home';
 import Products from './pages/Products';
@@ -15,17 +23,35 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import PaymentResult from './pages/PaymentResult';
 import Orders from './pages/Orders';
+
 import Login from './pages/Login';
 import Register from './pages/Register';
+
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+
 import Profile from './pages/Profile';
 import Wishlist from './pages/Wishlist';
 import Notifications from './pages/Notifications';
 import MyReviews from './pages/MyReviews';
 import Support from './pages/Support';
 
+// =========================
+// ROUTE PROTECTION
+// =========================
+
 import CustomerRoute from './components/CustomerRoute';
 import AdminRoute from './components/admin/AdminRoute';
+
+// =========================
+// ADMIN LAYOUT
+// =========================
+
 import AdminLayout from './components/admin/AdminLayout';
+
+// =========================
+// ADMIN PAGES
+// =========================
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
@@ -43,9 +69,15 @@ import AdminWarehouses from './pages/admin/AdminWarehouses';
 import AdminPayments from './pages/admin/AdminPayments';
 import AdminNotifications from './pages/admin/AdminNotifications';
 
+// =========================
+// CONTEXT PROVIDERS
+// =========================
+
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
-import { NotificationProvider } from './context/NotificationContext';
+import {
+  NotificationProvider,
+} from './context/NotificationContext';
 
 export default function App() {
   return (
@@ -55,12 +87,27 @@ export default function App() {
         v7_relativeSplatPath: true,
       }}
     >
+
       <AuthProvider>
+
         <CartProvider>
+
           <NotificationProvider>
+
             <Routes>
 
-              <Route element={<CustomerLayout />}>
+              {/* =====================================================
+                  CUSTOMER ROUTES
+              ===================================================== */}
+
+              <Route
+                element={<CustomerLayout />}
+              >
+
+                {/* =========================
+                    PUBLIC CUSTOMER PAGES
+                ========================= */}
+
                 <Route
                   path="/"
                   element={<Home />}
@@ -76,7 +123,46 @@ export default function App() {
                   element={<ProductDetails />}
                 />
 
-                <Route element={<CustomerRoute />}>
+                {/* =========================
+                    AUTH PAGES
+                ========================= */}
+
+                <Route
+                  path="/login"
+                  element={<Login />}
+                />
+
+                <Route
+                  path="/register"
+                  element={<Register />}
+                />
+
+                {/* =========================
+                    FORGOT PASSWORD
+                ========================= */}
+
+                <Route
+                  path="/forgot-password"
+                  element={<ForgotPassword />}
+                />
+
+                {/* =========================
+                    RESET PASSWORD
+                ========================= */}
+
+                <Route
+                  path="/reset-password/:token"
+                  element={<ResetPassword />}
+                />
+
+                {/* =================================================
+                    PROTECTED CUSTOMER ROUTES
+                ================================================= */}
+
+                <Route
+                  element={<CustomerRoute />}
+                >
+
                   <Route
                     path="/cart"
                     element={<Cart />}
@@ -126,26 +212,35 @@ export default function App() {
                     path="/my-reviews"
                     element={<MyReviews />}
                   />
+
                 </Route>
 
-                <Route
-                  path="/login"
-                  element={<Login />}
-                />
-
-                <Route
-                  path="/register"
-                  element={<Register />}
-                />
               </Route>
 
-              <Route element={<AdminRoute />}>
-                <Route element={<AdminLayout />}>
+              {/* =====================================================
+                  ADMIN ROUTES
+              ===================================================== */}
+
+              <Route
+                element={<AdminRoute />}
+              >
+
+                <Route
+                  element={<AdminLayout />}
+                >
+
+                  {/* =========================
+                      DASHBOARD
+                  ========================= */}
 
                   <Route
                     path="/admin"
                     element={<AdminDashboard />}
                   />
+
+                  {/* =========================
+                      PRODUCTS
+                  ========================= */}
 
                   <Route
                     path="/admin/products"
@@ -162,25 +257,45 @@ export default function App() {
                     element={<AdminProductForm />}
                   />
 
+                  {/* =========================
+                      CATEGORIES
+                  ========================= */}
+
                   <Route
                     path="/admin/categories"
                     element={<AdminCategories />}
                   />
+
+                  {/* =========================
+                      INVENTORY
+                  ========================= */}
 
                   <Route
                     path="/admin/inventory"
                     element={<AdminInventory />}
                   />
 
+                  {/* =========================
+                      WAREHOUSES
+                  ========================= */}
+
                   <Route
                     path="/admin/warehouses"
                     element={<AdminWarehouses />}
                   />
 
+                  {/* =========================
+                      USERS
+                  ========================= */}
+
                   <Route
                     path="/admin/users"
                     element={<AdminUsers />}
                   />
+
+                  {/* =========================
+                      ORDERS
+                  ========================= */}
 
                   <Route
                     path="/admin/orders"
@@ -192,30 +307,54 @@ export default function App() {
                     element={<AdminOrderDetails />}
                   />
 
+                  {/* =========================
+                      PAYMENTS
+                  ========================= */}
+
                   <Route
                     path="/admin/payments"
                     element={<AdminPayments />}
                   />
+
+                  {/* =========================
+                      NOTIFICATIONS
+                  ========================= */}
 
                   <Route
                     path="/admin/notifications"
                     element={<AdminNotifications />}
                   />
 
+                  {/* =========================
+                      ANALYTICS
+                  ========================= */}
+
                   <Route
                     path="/admin/analytics"
                     element={<AdminAnalytics />}
                   />
+
+                  {/* =========================
+                      REVIEWS
+                  ========================= */}
 
                   <Route
                     path="/admin/reviews"
                     element={<AdminReviews />}
                   />
 
+                  {/* =========================
+                      FEEDBACK
+                  ========================= */}
+
                   <Route
                     path="/admin/feedback"
                     element={<AdminFeedback />}
                   />
+
+                  {/* =========================
+                      SETTINGS
+                  ========================= */}
 
                   <Route
                     path="/admin/settings"
@@ -223,12 +362,18 @@ export default function App() {
                   />
 
                 </Route>
+
               </Route>
+
+              {/* =====================================================
+                  404
+              ===================================================== */}
 
               <Route
                 path="*"
                 element={
                   <div className="container-custom min-h-screen py-20 text-center">
+
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
                       404
                     </p>
@@ -247,19 +392,28 @@ export default function App() {
                     >
                       Back home
                     </a>
+
                   </div>
                 }
               />
 
             </Routes>
 
+            {/* =========================
+                TOASTER
+            ========================= */}
+
             <Toaster
               position="top-right"
               reverseOrder={false}
             />
+
           </NotificationProvider>
+
         </CartProvider>
+
       </AuthProvider>
+
     </BrowserRouter>
   );
 }

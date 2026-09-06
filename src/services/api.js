@@ -6,9 +6,11 @@ const API_URL =
 
 const api = axios.create({
   baseURL: API_URL,
+
   headers: {
     'Content-Type': 'application/json',
   },
+
   withCredentials: true,
 });
 
@@ -30,6 +32,7 @@ api.interceptors.request.use(
 
     return config;
   },
+
   (error) => Promise.reject(error)
 );
 
@@ -45,6 +48,7 @@ api.interceptors.response.use(
 
     return response;
   },
+
   (error) => {
     console.error(
       '❌ API Error:',
@@ -71,6 +75,21 @@ export const authAPI = {
 
   login: (credentials) =>
     api.post('/auth/login', credentials),
+
+  // Forgot password
+  forgotPassword: (email) =>
+    api.post('/auth/forgot-password', {
+      email,
+    }),
+
+  // Reset password
+  resetPassword: (token, password) =>
+    api.post(
+      `/auth/reset-password/${token}`,
+      {
+        password,
+      }
+    ),
 };
 
 // =========================
@@ -95,8 +114,17 @@ export const productsApi = {
     api.get(`/products/${id}`),
 
   getCategories: async () => {
-    const response = await api.get('/products/categories/all');
-    return { ...response, data: { categories: response.data } };
+    const response = await api.get(
+      '/products/categories/all'
+    );
+
+    return {
+      ...response,
+
+      data: {
+        categories: response.data,
+      },
+    };
   },
 };
 
@@ -135,17 +163,22 @@ export const orderApi = {
 
   getOrders: async () => {
     const response = await api.get('/orders');
+
     return response;
   },
 
-  getPreviouslyPurchased: () => api.get('/orders/previously-purchased'),
+  getPreviouslyPurchased: () =>
+    api.get('/orders/previously-purchased'),
 
   getOrderById: (id) =>
     api.get(`/orders/${id}`),
 
   // Compatibility with older code
   getOrder: async (id) => {
-    const response = await api.get(`/orders/${id}`);
+    const response = await api.get(
+      `/orders/${id}`
+    );
+
     return response;
   },
 
@@ -164,8 +197,18 @@ export const paymentApi = {
       paymentData
     ),
 
-  initiateEsewa: (orderId) => api.post('/gateway-payments/esewa/initiate', { orderId }),
-  getGatewayPaymentStatus: (orderId) => api.get(`/gateway-payments/status/${orderId}`),
+  initiateEsewa: (orderId) =>
+    api.post(
+      '/gateway-payments/esewa/initiate',
+      {
+        orderId,
+      }
+    ),
+
+  getGatewayPaymentStatus: (orderId) =>
+    api.get(
+      `/gateway-payments/status/${orderId}`
+    ),
 };
 
 // =========================
@@ -174,41 +217,150 @@ export const paymentApi = {
 
 export const recommendationApi = {
   getRecommendations: (userId) =>
-    api.get(`/recommendations/${userId}`),
+    api.get(
+      `/recommendations/${userId}`
+    ),
 };
+
+// =========================
+// REVIEWS
+// =========================
 
 export const reviewApi = {
-  getProductReviews: (productId) => api.get(`/reviews/product/${productId}`),
-  createReview: (review) => api.post('/reviews', review),
-  updateReview: (id, review) => api.put(`/reviews/${id}`, review),
-  deleteReview: (id) => api.delete(`/reviews/${id}`),
+  getProductReviews: (productId) =>
+    api.get(
+      `/reviews/product/${productId}`
+    ),
+
+  createReview: (review) =>
+    api.post('/reviews', review),
+
+  updateReview: (id, review) =>
+    api.put(`/reviews/${id}`, review),
+
+  deleteReview: (id) =>
+    api.delete(`/reviews/${id}`),
 };
 
+// =========================
+// CUSTOMER
+// =========================
+
 export const customerApi = {
-  getProfile: () => api.get('/customer/me'),
-  updateProfile: (data) => api.put('/customer/me', data),
+  getProfile: () =>
+    api.get('/customer/me'),
+
+  updateProfile: (data) =>
+    api.put('/customer/me', data),
+
   uploadProfileImage: (file) => {
     const formData = new FormData();
-    formData.append('profileImage', file);
-    return api.post('/customer/me/profile-image', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+    formData.append(
+      'profileImage',
+      file
+    );
+
+    return api.post(
+      '/customer/me/profile-image',
+      formData,
+      {
+        headers: {
+          'Content-Type':
+            'multipart/form-data',
+        },
+      }
+    );
   },
-  removeProfileImage: () => api.delete('/customer/me/profile-image'),
-  changePassword: (data) => api.put('/customer/me/password', data),
-  getWishlist: () => api.get('/customer/wishlist'),
-  addToWishlist: (id) => api.post(`/customer/wishlist/${id}`),
-  removeFromWishlist: (id) => api.delete(`/customer/wishlist/${id}`),
-  getAddresses: () => api.get('/customer/addresses'),
-  addAddress: (data) => api.post('/customer/addresses', data),
-  updateAddress: (id, data) => api.put(`/customer/addresses/${id}`, data),
-  removeAddress: (id) => api.delete(`/customer/addresses/${id}`),
-  sendFeedback: (data) => api.post('/customer/feedback', data),
-  getNotifications: () => api.get('/customer/notifications'),
-  getUnreadNotificationCount: () => api.get('/customer/notifications/unread-count'),
-  markNotificationRead: (id) => api.patch(`/customer/notifications/${id}/read`),
-  markNotificationsRead: () => api.put('/customer/notifications/read-all'),
-  deleteNotification: (id) => api.delete(`/customer/notifications/${id}`),
-  getPurchases: () => api.get('/orders/previously-purchased'),
-  getReviews: () => api.get('/customer/reviews'),
+
+  removeProfileImage: () =>
+    api.delete(
+      '/customer/me/profile-image'
+    ),
+
+  changePassword: (data) =>
+    api.put(
+      '/customer/me/password',
+      data
+    ),
+
+  getWishlist: () =>
+    api.get('/customer/wishlist'),
+
+  addToWishlist: (id) =>
+    api.post(
+      `/customer/wishlist/${id}`
+    ),
+
+  removeFromWishlist: (id) =>
+    api.delete(
+      `/customer/wishlist/${id}`
+    ),
+
+  getAddresses: () =>
+    api.get('/customer/addresses'),
+
+  addAddress: (data) =>
+    api.post(
+      '/customer/addresses',
+      data
+    ),
+
+  updateAddress: (id, data) =>
+    api.put(
+      `/customer/addresses/${id}`,
+      data
+    ),
+
+  removeAddress: (id) =>
+    api.delete(
+      `/customer/addresses/${id}`
+    ),
+
+  sendFeedback: (data) =>
+    api.post(
+      '/customer/feedback',
+      data
+    ),
+
+  getNotifications: () =>
+    api.get(
+      '/customer/notifications'
+    ),
+
+  getUnreadNotificationCount: () =>
+    api.get(
+      '/customer/notifications/unread-count'
+    ),
+
+  markNotificationRead: (id) =>
+    api.patch(
+      `/customer/notifications/${id}/read`
+    ),
+
+  markNotificationsRead: () =>
+    api.put(
+      '/customer/notifications/read-all'
+    ),
+
+  deleteNotification: (id) =>
+    api.delete(
+      `/customer/notifications/${id}`
+    ),
+
+  getPurchases: () =>
+    api.get(
+      '/orders/previously-purchased'
+    ),
+
+  getReviews: () =>
+    api.get(
+      '/customer/reviews'
+    ),
 };
+
+// =========================
+// DEFAULT EXPORT
+// =========================
 
 export default api;
