@@ -1,0 +1,178 @@
+@import './animations.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #2F241F;
+  --color-secondary: #5C4033;
+  --color-accent: #C58B4E;
+  --color-accent-hover: #A96F35;
+
+  --color-background: #F7F3EE;
+  --color-surface: #FFFDFC;
+
+  --color-text: #241B17;
+  --color-text-secondary: #766A63;
+
+  --color-border: #E7DED5;
+
+  --color-success: #3F7D58;
+  --color-error: #B84A4A;
+  --color-warning: #C58B4E;
+
+  --shadow-card: 0 10px 28px rgba(47, 36, 31, 0.06);
+  --shadow-float: 0 16px 40px rgba(47, 36, 31, 0.1);
+  --radius-card: 14px;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--color-text);
+  background: var(--color-background);
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-text);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #EFE8DF;
+  color: var(--color-text);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@layer components {
+  .container-custom {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .card {
+    @apply border bg-surface;
+    border-color: var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .btn-primary {
+    @apply premium-button inline-flex items-center justify-center rounded-[12px] px-4 py-2.5 text-sm font-semibold text-white transition focus:outline-none disabled:cursor-not-allowed disabled:opacity-60;
+    background: var(--color-primary);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-secondary);
+  }
+
+  .btn-primary:focus-visible {
+    box-shadow: 0 0 0 3px rgba(197, 139, 78, 0.35);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-[12px] bg-transparent px-4 py-2.5 text-sm font-semibold transition hover:bg-ivory focus:outline-none disabled:cursor-not-allowed disabled:opacity-60;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .btn-accent {
+    @apply premium-button inline-flex items-center justify-center rounded-[12px] px-4 py-2.5 text-sm font-semibold text-white transition focus:outline-none disabled:cursor-not-allowed disabled:opacity-60;
+    background: var(--color-accent);
+  }
+
+  .btn-accent:hover:not(:disabled) {
+    background: var(--color-accent-hover);
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center rounded-[12px] px-4 py-2.5 text-sm font-semibold text-white transition;
+    background: var(--color-error);
+  }
+
+  .admin-input {
+    @apply mt-1 block w-full rounded-[12px] border bg-surface px-3 py-2.5 text-sm outline-none;
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  .admin-input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(197, 139, 78, 0.18);
+  }
+
+  .admin-stat {
+    @apply rounded-[14px] border bg-surface p-5;
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-card);
+  }
+
+  .admin-stat span {
+    color: var(--color-text-secondary);
+    @apply text-sm;
+  }
+
+  .admin-stat b {
+    color: var(--color-text);
+    @apply mt-3 block text-2xl;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold capitalize;
+  }
+}
+
+input:not([type='checkbox']):not([type='radio']),
+textarea,
+select {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+}
+
+input:not([type='checkbox']):not([type='radio']):focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(197, 139, 78, 0.18);
+}
+
+.page-shell {
+  min-height: calc(100vh - 4rem);
+}
+
+.surface-grid {
+  background-color: var(--color-background);
+}
+
+.skeleton {
+  @apply animate-pulse rounded-[12px];
+  background: #EFE8DF;
+}
+
+table tbody tr {
+  transition: background-color 180ms ease;
+}
+
+table tbody tr:hover {
+  background: #F7F3EE;
+}
+
+.font-display {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
