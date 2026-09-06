@@ -1,6 +1,5 @@
 import { NavLink } from 'react-router-dom';
 
-
 import {
   LayoutDashboard,
   Package,
@@ -9,7 +8,6 @@ import {
   BarChart3,
   MessageSquare,
   Settings,
-  Store,
   LogOut,
   Tags,
   Boxes,
@@ -19,7 +17,6 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../../context/AuthContext';
-
 import logo from '../../../assets/LoGo.png';
 
 const links = [
@@ -44,7 +41,7 @@ export default function AdminSidebar({ open, onNavigate }) {
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-espresso px-5 py-5 text-ivory transition-transform lg:translate-x-0 ${
+      className={`fixed inset-y-0 left-0 z-40 flex w-56 sm:w-60 lg:w-64 flex-col bg-espresso px-4 sm:px-5 py-5 text-ivory transition-transform lg:translate-x-0 ${
         open ? 'translate-x-0' : '-translate-x-full'
       }`}
     >
@@ -106,16 +103,6 @@ export default function AdminSidebar({ open, onNavigate }) {
           BOTTOM ACTIONS
       ====================================================== */}
       <div className="mt-4 border-t border-white/10 pt-4">
-        {/* Back to Store */}
-        <NavLink
-          to="/"
-          onClick={onNavigate}
-          className="mb-1 flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-sm text-ivory/70 transition-colors hover:bg-white/5 hover:text-ivory"
-        >
-          <Store size={18} strokeWidth={1.8} />
-          <span>Back to Store</span>
-        </NavLink>
-
         {/* Logout */}
         <button
           type="button"
