@@ -6,56 +6,29 @@ const API_URL =
 
 const api = axios.create({
   baseURL: API_URL,
-
   headers: {
     'Content-Type': 'application/json',
   },
-
   withCredentials: true,
 });
 
-// =========================
-// REQUEST INTERCEPTOR
-// =========================
-
 api.interceptors.request.use(
   (config) => {
-    console.log(
-      `📤 ${config.method?.toUpperCase()} ${config.url}`
-    );
-
     const token = localStorage.getItem('token');
 
     if (token) {
+      config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
   },
-
   (error) => Promise.reject(error)
 );
 
-// =========================
-// RESPONSE INTERCEPTOR
-// =========================
-
 api.interceptors.response.use(
-  (response) => {
-    console.log(
-      `✅ ${response.status} ${response.config.url}`
-    );
-
-    return response;
-  },
-
+  (response) => response,
   (error) => {
-    console.error(
-      '❌ API Error:',
-      error.response?.status,
-      error.response?.data || error.message
-    );
-
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -65,10 +38,6 @@ api.interceptors.response.use(
   }
 );
 
-// =========================
-// AUTH
-// =========================
-
 export const authAPI = {
   register: (userData) =>
     api.post('/auth/register', userData),
@@ -76,25 +45,16 @@ export const authAPI = {
   login: (credentials) =>
     api.post('/auth/login', credentials),
 
-  // Forgot password
   forgotPassword: (email) =>
     api.post('/auth/forgot-password', {
       email,
     }),
 
-  // Reset password
   resetPassword: (token, password) =>
-    api.post(
-      `/auth/reset-password/${token}`,
-      {
-        password,
-      }
-    ),
+    api.post(`/auth/reset-password/${token}`, {
+      password,
+    }),
 };
-
-// =========================
-// PRODUCTS
-// =========================
 
 export const productsApi = {
   getProducts: (params = {}) =>
@@ -120,7 +80,6 @@ export const productsApi = {
 
     return {
       ...response,
-
       data: {
         categories: response.data,
       },
@@ -129,10 +88,6 @@ export const productsApi = {
 };
 
 export const productAPI = productsApi;
-
-// =========================
-// CART
-// =========================
 
 export const cartApi = {
   getCart: () =>
@@ -153,19 +108,12 @@ export const cartApi = {
     api.delete('/cart'),
 };
 
-// =========================
-// ORDERS
-// =========================
-
 export const orderApi = {
   createOrder: (orderData) =>
     api.post('/orders', orderData),
 
-  getOrders: async () => {
-    const response = await api.get('/orders');
-
-    return response;
-  },
+  getOrders: () =>
+    api.get('/orders'),
 
   getPreviouslyPurchased: () =>
     api.get('/orders/previously-purchased'),
@@ -173,22 +121,12 @@ export const orderApi = {
   getOrderById: (id) =>
     api.get(`/orders/${id}`),
 
-  // Compatibility with older code
-  getOrder: async (id) => {
-    const response = await api.get(
-      `/orders/${id}`
-    );
-
-    return response;
-  },
+  getOrder: (id) =>
+    api.get(`/orders/${id}`),
 
   cancelOrder: (id) =>
     api.put(`/orders/${id}/cancel`),
 };
-
-// =========================
-// PAYMENTS
-// =========================
 
 export const paymentApi = {
   createPaymentIntent: (paymentData) =>
@@ -211,26 +149,14 @@ export const paymentApi = {
     ),
 };
 
-// =========================
-// RECOMMENDATIONS
-// =========================
-
 export const recommendationApi = {
   getRecommendations: (userId) =>
-    api.get(
-      `/recommendations/${userId}`
-    ),
+    api.get(`/recommendations/${userId}`),
 };
-
-// =========================
-// REVIEWS
-// =========================
 
 export const reviewApi = {
   getProductReviews: (productId) =>
-    api.get(
-      `/reviews/product/${productId}`
-    ),
+    api.get(`/reviews/product/${productId}`),
 
   createReview: (review) =>
     api.post('/reviews', review),
@@ -241,10 +167,6 @@ export const reviewApi = {
   deleteReview: (id) =>
     api.delete(`/reviews/${id}`),
 };
-
-// =========================
-// CUSTOMER
-// =========================
 
 export const customerApi = {
   getProfile: () =>
@@ -263,13 +185,7 @@ export const customerApi = {
 
     return api.post(
       '/customer/me/profile-image',
-      formData,
-      {
-        headers: {
-          'Content-Type':
-            'multipart/form-data',
-        },
-      }
+      formData
     );
   },
 
@@ -358,9 +274,5 @@ export const customerApi = {
       '/customer/reviews'
     ),
 };
-
-// =========================
-// DEFAULT EXPORT
-// =========================
 
 export default api;
