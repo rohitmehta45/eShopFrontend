@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 
 const API_URL =
@@ -46,26 +47,18 @@ export const authAPI = {
     api.post('/auth/login', credentials),
 
   forgotPassword: (email) =>
-    api.post('/auth/forgot-password', {
-      email,
-    }),
+    api.post('/auth/forgot-password', { email }),
 
   resetPassword: (token, password) =>
-    api.post(`/auth/reset-password/${token}`, {
-      password,
-    }),
+    api.post(`/auth/reset-password/${token}`, { password }),
 };
 
 export const productsApi = {
   getProducts: (params = {}) =>
-    api.get('/products', {
-      params,
-    }),
+    api.get('/products', { params }),
 
   getAll: (params = {}) =>
-    api.get('/products', {
-      params,
-    }),
+    api.get('/products', { params }),
 
   getById: (id) =>
     api.get(`/products/${id}`),
@@ -74,9 +67,7 @@ export const productsApi = {
     api.get(`/products/${id}`),
 
   getCategories: async () => {
-    const response = await api.get(
-      '/products/categories/all'
-    );
+    const response = await api.get('/products/categories/all');
 
     return {
       ...response,
@@ -97,9 +88,7 @@ export const cartApi = {
     api.post('/cart', cartData),
 
   updateItem: (productId, quantity) =>
-    api.put(`/cart/${productId}`, {
-      quantity,
-    }),
+    api.put(`/cart/${productId}`, { quantity }),
 
   removeItem: (productId) =>
     api.delete(`/cart/${productId}`),
@@ -138,9 +127,7 @@ export const paymentApi = {
   initiateEsewa: (orderId) =>
     api.post(
       '/gateway-payments/esewa/initiate',
-      {
-        orderId,
-      }
+      { orderId }
     ),
 
   getGatewayPaymentStatus: (orderId) =>
@@ -177,11 +164,7 @@ export const customerApi = {
 
   uploadProfileImage: (file) => {
     const formData = new FormData();
-
-    formData.append(
-      'profileImage',
-      file
-    );
+    formData.append('profileImage', file);
 
     return api.post(
       '/customer/me/profile-image',
@@ -190,89 +173,56 @@ export const customerApi = {
   },
 
   removeProfileImage: () =>
-    api.delete(
-      '/customer/me/profile-image'
-    ),
+    api.delete('/customer/me/profile-image'),
 
   changePassword: (data) =>
-    api.put(
-      '/customer/me/password',
-      data
-    ),
+    api.put('/customer/me/password', data),
 
   getWishlist: () =>
     api.get('/customer/wishlist'),
 
   addToWishlist: (id) =>
-    api.post(
-      `/customer/wishlist/${id}`
-    ),
+    api.post(`/customer/wishlist/${id}`),
 
   removeFromWishlist: (id) =>
-    api.delete(
-      `/customer/wishlist/${id}`
-    ),
+    api.delete(`/customer/wishlist/${id}`),
 
   getAddresses: () =>
     api.get('/customer/addresses'),
 
   addAddress: (data) =>
-    api.post(
-      '/customer/addresses',
-      data
-    ),
+    api.post('/customer/addresses', data),
 
   updateAddress: (id, data) =>
-    api.put(
-      `/customer/addresses/${id}`,
-      data
-    ),
+    api.put(`/customer/addresses/${id}`, data),
 
   removeAddress: (id) =>
-    api.delete(
-      `/customer/addresses/${id}`
-    ),
+    api.delete(`/customer/addresses/${id}`),
 
   sendFeedback: (data) =>
-    api.post(
-      '/customer/feedback',
-      data
-    ),
+    api.post('/customer/feedback', data),
 
   getNotifications: () =>
-    api.get(
-      '/customer/notifications'
-    ),
+    api.get('/customer/notifications'),
 
   getUnreadNotificationCount: () =>
-    api.get(
-      '/customer/notifications/unread-count'
-    ),
+    api.get('/customer/notifications/unread-count'),
 
   markNotificationRead: (id) =>
-    api.patch(
-      `/customer/notifications/${id}/read`
-    ),
+    api.patch(`/customer/notifications/${id}/read`),
 
   markNotificationsRead: () =>
-    api.put(
-      '/customer/notifications/read-all'
-    ),
+    api.put('/customer/notifications/read-all'),
 
   deleteNotification: (id) =>
-    api.delete(
-      `/customer/notifications/${id}`
-    ),
+    api.delete(`/customer/notifications/${id}`),
 
   getPurchases: () =>
-    api.get(
-      '/orders/previously-purchased'
-    ),
+    api.get('/orders/previously-purchased'),
 
   getReviews: () =>
-    api.get(
-      '/customer/reviews'
-    ),
+    api.get('/customer/reviews'),
 };
 
 export default api;
+
