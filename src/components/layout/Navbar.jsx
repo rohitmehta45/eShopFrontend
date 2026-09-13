@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import logo from '../../../assets/LoGo.png'
+import logo from '../../../assets/LoGo.png';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-
 import {
   Bell,
   ChevronDown,
@@ -13,7 +12,6 @@ import {
   User,
   X,
 } from 'lucide-react';
-
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useNotifications } from '../../context/NotificationContext';
@@ -32,7 +30,6 @@ export default function Navbar() {
   const [query, setQuery] = useState('');
 
   const profileRef = useRef(null);
-
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -40,9 +37,6 @@ export default function Navbar() {
   const { totalItems } = useCart();
   const { unreadCount } = useNotifications();
 
-  // --------------------------------------------------
-  // Handle navbar shadow/background on scroll
-  // --------------------------------------------------
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 8);
@@ -59,9 +53,6 @@ export default function Navbar() {
     };
   }, []);
 
-  // --------------------------------------------------
-  // Close profile menu when clicking outside / Escape
-  // --------------------------------------------------
   useEffect(() => {
     const closeOnOutsideClick = (event) => {
       if (!profileRef.current?.contains(event.target)) {
@@ -84,26 +75,17 @@ export default function Navbar() {
     };
   }, []);
 
-  // --------------------------------------------------
-  // Close mobile/profile menus when route changes
-  // --------------------------------------------------
   useEffect(() => {
     setProfileOpen(false);
     setIsOpen(false);
   }, [location.pathname]);
 
-  // --------------------------------------------------
-  // Logout
-  // --------------------------------------------------
   const handleLogout = () => {
     logout();
     setProfileOpen(false);
     setIsOpen(false);
   };
 
-  // --------------------------------------------------
-  // Product search
-  // --------------------------------------------------
   const submitSearch = (event) => {
     event.preventDefault();
 
@@ -111,6 +93,7 @@ export default function Navbar() {
 
     if (!value) {
       navigate('/products');
+      setIsOpen(false);
       return;
     }
 
@@ -118,75 +101,48 @@ export default function Navbar() {
     setIsOpen(false);
   };
 
-  // --------------------------------------------------
-  // Common account menu link style
-  // --------------------------------------------------
   const menuLink =
     'flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm text-mocha transition hover:bg-ivory hover:text-accent';
 
-  // --------------------------------------------------
-  // Account dropdown
-  // --------------------------------------------------
   const accountMenu = (
     <div
       role="menu"
       className="dropdown-premium absolute right-0 top-12 z-50 w-64 rounded-[14px] border border-[var(--color-border)] bg-surface p-3 shadow-soft"
     >
-      {/* User information */}
       <div className="flex items-center gap-3 border-b border-[var(--color-border)] px-3 pb-3">
         <UserAvatar user={user} className="h-10 w-10" />
-
         <div className="min-w-0">
           <p className="truncate font-semibold text-espresso">
             {user?.name || 'User'}
           </p>
-
           <p className="truncate text-xs text-[var(--color-text-secondary)]">
             {user?.email}
           </p>
         </div>
       </div>
 
-      {/* Account links */}
       <div className="py-2">
-        <Link
-          role="menuitem"
-          to="/profile"
-          className={menuLink}
-        >
+        <Link role="menuitem" to="/profile" className={menuLink}>
           <User className="h-4 w-4" />
           Profile
         </Link>
 
-        <Link
-          role="menuitem"
-          to="/orders"
-          className={menuLink}
-        >
+        <Link role="menuitem" to="/orders" className={menuLink}>
           <ShoppingCart className="h-4 w-4" />
           My Orders
         </Link>
 
-        <Link
-          role="menuitem"
-          to="/wishlist"
-          className={menuLink}
-        >
+        <Link role="menuitem" to="/wishlist" className={menuLink}>
           <Heart className="h-4 w-4" />
           Wishlist
         </Link>
 
-        <Link
-          role="menuitem"
-          to="/notifications"
-          className={menuLink}
-        >
+        <Link role="menuitem" to="/notifications" className={menuLink}>
           <Bell className="h-4 w-4" />
           Notifications
         </Link>
       </div>
 
-      {/* Logout */}
       <button
         type="button"
         role="menuitem"
@@ -208,10 +164,6 @@ export default function Navbar() {
       }`}
     >
       <div className="container-custom flex h-[72px] items-center justify-between gap-4">
-
-        {/* ==================================================
-            VELMORA LOGO
-        ================================================== */}
         <Link
           to="/"
           className="flex shrink-0 items-center"
@@ -221,12 +173,12 @@ export default function Navbar() {
             src={logo}
             alt="Velmora"
             className="h-20 w-auto object-contain"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
           />
         </Link>
 
-        {/* ==================================================
-            DESKTOP NAVIGATION
-        ================================================== */}
         <nav className="hidden items-center gap-7 md:flex">
           {navItems.map((item) => (
             <NavLink
@@ -246,18 +198,12 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* ==================================================
-            DESKTOP ACTIONS
-        ================================================== */}
         <div className="hidden items-center gap-2 lg:flex">
-
-          {/* Search */}
           <form
             onSubmit={submitSearch}
             className="flex h-10 w-56 items-center gap-2 rounded-full border border-[var(--color-border)] bg-surface px-3"
           >
             <Search className="h-4 w-4 shrink-0 text-[var(--color-text-secondary)]" />
-
             <input
               type="text"
               value={query}
@@ -268,7 +214,6 @@ export default function Navbar() {
             />
           </form>
 
-          {/* Wishlist */}
           {isAuthenticated && (
             <Link
               to="/wishlist"
@@ -279,7 +224,6 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Notifications */}
           {isAuthenticated && (
             <Link
               to="/notifications"
@@ -287,7 +231,6 @@ export default function Navbar() {
               aria-label="Notifications"
             >
               <Bell className="h-5 w-5" />
-
               {unreadCount > 0 && (
                 <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white">
                   {unreadCount}
@@ -296,14 +239,12 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Cart */}
           <Link
             to="/cart"
             className="icon-hover relative rounded-full p-2 text-mocha hover:bg-ivory"
             aria-label="Cart"
           >
             <ShoppingCart className="h-5 w-5" />
-
             {totalItems > 0 && (
               <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-espresso px-1 text-[10px] font-bold text-ivory">
                 {totalItems}
@@ -311,29 +252,17 @@ export default function Navbar() {
             )}
           </Link>
 
-          {/* ==================================================
-              AUTHENTICATED USER
-          ================================================== */}
           {isAuthenticated ? (
-            <div
-              ref={profileRef}
-              className="relative"
-            >
+            <div ref={profileRef} className="relative">
               <button
                 type="button"
-                onClick={() =>
-                  setProfileOpen((open) => !open)
-                }
+                onClick={() => setProfileOpen((open) => !open)}
                 aria-expanded={profileOpen}
                 aria-haspopup="menu"
                 aria-label="Open profile menu"
                 className="avatar-hover flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-surface px-2 py-1.5"
               >
-                <UserAvatar
-                  user={user}
-                  className="h-7 w-7"
-                />
-
+                <UserAvatar user={user} className="h-7 w-7" />
                 <ChevronDown
                   className={`h-4 w-4 text-mocha transition-transform ${
                     profileOpen ? 'rotate-180' : ''
@@ -344,30 +273,17 @@ export default function Navbar() {
               {profileOpen && accountMenu}
             </div>
           ) : (
-            /* ==================================================
-                GUEST USER
-            ================================================== */
             <div className="flex items-center gap-2">
-              <Link
-                to="/login"
-                className="btn-secondary px-3 py-2"
-              >
+              <Link to="/login" className="btn-secondary px-3 py-2">
                 Sign in
               </Link>
-
-              <Link
-                to="/register"
-                className="btn-primary px-3 py-2"
-              >
+              <Link to="/register" className="btn-primary px-3 py-2">
                 Join
               </Link>
             </div>
           )}
         </div>
 
-        {/* ==================================================
-            MOBILE MENU BUTTON
-        ================================================== */}
         <button
           type="button"
           className="icon-hover rounded-[10px] p-2 text-mocha md:hidden"
@@ -383,33 +299,24 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* ==================================================
-          MOBILE MENU
-      ================================================== */}
       {isOpen && (
         <div className="mobile-menu-premium border-t border-[var(--color-border)] bg-surface md:hidden">
           <div className="container-custom flex flex-col gap-3 py-4">
-
-            {/* Mobile Search */}
             <form
               onSubmit={submitSearch}
               className="flex h-11 items-center gap-2 rounded-[12px] border border-[var(--color-border)] px-3"
             >
               <Search className="h-4 w-4 shrink-0" />
-
               <input
                 type="text"
                 value={query}
-                onChange={(event) =>
-                  setQuery(event.target.value)
-                }
+                onChange={(event) => setQuery(event.target.value)}
                 className="w-full border-0 bg-transparent text-sm outline-none"
                 placeholder="Search products"
                 aria-label="Search products"
               />
             </form>
 
-            {/* Mobile Navigation */}
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -417,9 +324,7 @@ export default function Navbar() {
                 end={item.to === '/'}
                 className={({ isActive }) =>
                   `text-sm font-medium ${
-                    isActive
-                      ? 'text-accent'
-                      : 'text-mocha'
+                    isActive ? 'text-accent' : 'text-mocha'
                   }`
                 }
               >
@@ -427,54 +332,32 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            {/* Cart */}
-            <Link
-              to="/cart"
-              className="text-sm font-medium text-mocha"
-            >
+            <Link to="/cart" className="text-sm font-medium text-mocha">
               Cart
-              {totalItems > 0
-                ? ` (${totalItems})`
-                : ''}
+              {totalItems > 0 ? ` (${totalItems})` : ''}
             </Link>
 
-            {/* Notifications */}
             {isAuthenticated && (
               <Link
                 to="/notifications"
                 className="text-sm font-medium text-mocha"
               >
                 Notifications
-                {unreadCount > 0
-                  ? ` (${unreadCount})`
-                  : ''}
+                {unreadCount > 0 ? ` (${unreadCount})` : ''}
               </Link>
             )}
 
-            {/* ==================================================
-                MOBILE AUTHENTICATED MENU
-            ================================================== */}
             {isAuthenticated ? (
               <div className="border-t border-[var(--color-border)] pt-3">
-
-                <Link
-                  to="/profile"
-                  className="block py-2 text-sm"
-                >
+                <Link to="/profile" className="block py-2 text-sm">
                   Profile
                 </Link>
 
-                <Link
-                  to="/orders"
-                  className="block py-2 text-sm"
-                >
+                <Link to="/orders" className="block py-2 text-sm">
                   Orders
                 </Link>
 
-                <Link
-                  to="/wishlist"
-                  className="block py-2 text-sm"
-                >
+                <Link to="/wishlist" className="block py-2 text-sm">
                   Wishlist
                 </Link>
 
@@ -488,21 +371,12 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              /* ==================================================
-                  MOBILE GUEST MENU
-              ================================================== */
               <div className="flex gap-2 pt-2">
-                <Link
-                  to="/login"
-                  className="btn-secondary flex-1"
-                >
+                <Link to="/login" className="btn-secondary flex-1">
                   Sign in
                 </Link>
 
-                <Link
-                  to="/register"
-                  className="btn-primary flex-1"
-                >
+                <Link to="/register" className="btn-primary flex-1">
                   Join
                 </Link>
               </div>
