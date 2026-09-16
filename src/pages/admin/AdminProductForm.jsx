@@ -7,7 +7,7 @@ const initialForm = {
   name: '',
   description: '',
   price: '',
-  category: 'Electronics',
+  category: '',
   stock: 0,
   featured: false
 };
@@ -17,33 +17,68 @@ export default function AdminProductForm() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState(initialForm);
+  const [categories, setCategories] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState('');
   const [loading, setLoading] = useState(Boolean(id));
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
+    const loadCategories = async () => {
+      try {
+        const { data } = await adminApi.getCategories();
+        const loadedCategories = data.categories || [];
+
+        setCategories(
+          loadedCategories.filter((category) => category.active !== false)
+        );
+
+        if (!id && loadedCategories.length > 0) {
+          const firstCategory = loadedCategories.find(
+            (category) => category.active !== false
+          );
+
+          if (firstCategory) {
+            setForm((current) => ({
+              ...current,
+              category: firstCategory.name
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Category load error:', error);
+        toast.error(
+          error.response?.data?.error ||
+            'Unable to load categories'
+        );
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    loadCategories();
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
 
     const loadProduct = async () => {
       try {
-        const { data } =
-          await adminApi.getProduct(id);
+        const { data } = await adminApi.getProduct(id);
 
-        const product =
-          data.product || data;
+        const product = data.product || data;
 
         setForm({
           name: product.name || '',
-          description:
-            product.description || '',
+          description: product.description || '',
           price: product.price ?? '',
-          category:
-            product.category ||
-            'Electronics',
+          category: product.category || '',
           stock: product.stock ?? 0,
-          featured:
-            Boolean(product.featured)
+          featured: Boolean(product.featured)
         });
 
         setPreview(product.image || '');
@@ -70,36 +105,27 @@ export default function AdminProductForm() {
   };
 
   const handleImageChange = (event) => {
-    const file =
-      event.target.files?.[0];
+    const file = event.target.files?.[0];
 
     if (!file) {
       return;
     }
 
     if (!file.type.startsWith('image/')) {
-      toast.error(
-        'Please select a valid image'
-      );
-
+      toast.error('Please select a valid image');
       event.target.value = '';
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error(
-        'Image must be smaller than 5MB'
-      );
-
+      toast.error('Image must be smaller than 5MB');
       event.target.value = '';
       return;
     }
 
     setImageFile(file);
 
-    const objectUrl =
-      URL.createObjectURL(file);
-
+    const objectUrl = URL.createObjectURL(file);
     setPreview(objectUrl);
   };
 
@@ -107,43 +133,32 @@ export default function AdminProductForm() {
     event.preventDefault();
 
     if (!id && !imageFile) {
-      toast.error(
-        'Please select a product image'
-      );
+      toast.error('Please select a product image');
       return;
     }
 
     if (!form.name.trim()) {
-      toast.error(
-        'Product name is required'
-      );
+      toast.error('Product name is required');
       return;
     }
 
     if (!form.description.trim()) {
-      toast.error(
-        'Product description is required'
-      );
+      toast.error('Product description is required');
       return;
     }
 
-    if (
-      form.price === '' ||
-      Number(form.price) < 0
-    ) {
-      toast.error(
-        'Please enter a valid price'
-      );
+    if (form.price === '' || Number(form.price) < 0) {
+      toast.error('Please enter a valid price');
       return;
     }
 
-    if (
-      form.stock === '' ||
-      Number(form.stock) < 0
-    ) {
-      toast.error(
-        'Please enter a valid stock'
-      );
+    if (!form.category) {
+      toast.error('Please select a category');
+      return;
+    }
+
+    if (form.stock === '' || Number(form.stock) < 0) {
+      toast.error('Please enter a valid stock');
       return;
     }
 
@@ -152,52 +167,21 @@ export default function AdminProductForm() {
 
       const formData = new FormData();
 
-      formData.append(
-        'name',
-        form.name.trim()
-      );
-
-      formData.append(
-        'description',
-        form.description.trim()
-      );
-
-      formData.append(
-        'price',
-        String(form.price)
-      );
-
-      formData.append(
-        'category',
-        form.category
-      );
-
-      formData.append(
-        'stock',
-        String(form.stock)
-      );
-
-      formData.append(
-        'featured',
-        String(form.featured)
-      );
+      formData.append('name', form.name.trim());
+      formData.append('description', form.description.trim());
+      formData.append('price', String(form.price));
+      formData.append('category', form.category);
+      formData.append('stock', String(form.stock));
+      formData.append('featured', String(form.featured));
 
       if (imageFile) {
-        formData.append(
-          'image',
-          imageFile
-        );
+        formData.append('image', imageFile);
       }
 
       if (id) {
-        await adminApi.updateProduct(
-          id,
-          formData
-        );
+        await adminApi.updateProduct(id, formData);
       } else {
-        await adminApi.createProduct(
-          formData
-        );
+        await adminApi.createProduct(formData);
       }
 
       toast.success(
@@ -208,10 +192,7 @@ export default function AdminProductForm() {
 
       navigate('/admin/products');
     } catch (error) {
-      console.error(
-        'Product save error:',
-        error
-      );
+      console.error('Product save error:', error);
 
       toast.error(
         error.response?.data?.error ||
@@ -222,10 +203,10 @@ export default function AdminProductForm() {
     }
   };
 
-  if (loading) {
+  if (loading || loadingCategories) {
     return (
       <div className="p-6">
-        Loading product...
+        Loading...
       </div>
     );
   }
@@ -238,9 +219,7 @@ export default function AdminProductForm() {
         </p>
 
         <h2 className="text-3xl font-display">
-          {id
-            ? 'Edit Product'
-            : 'Add Product'}
+          {id ? 'Edit Product' : 'Add Product'}
         </h2>
       </div>
 
@@ -258,10 +237,7 @@ export default function AdminProductForm() {
             required
             value={form.name}
             onChange={(event) =>
-              updateField(
-                'name',
-                event.target.value
-              )
+              updateField('name', event.target.value)
             }
             className="admin-input"
             placeholder="Enter product name"
@@ -277,10 +253,7 @@ export default function AdminProductForm() {
             required
             value={form.description}
             onChange={(event) =>
-              updateField(
-                'description',
-                event.target.value
-              )
+              updateField('description', event.target.value)
             }
             className="admin-input min-h-28"
             placeholder="Enter product description"
@@ -299,10 +272,7 @@ export default function AdminProductForm() {
             step="0.01"
             value={form.price}
             onChange={(event) =>
-              updateField(
-                'price',
-                event.target.value
-              )
+              updateField('price', event.target.value)
             }
             className="admin-input"
             placeholder="0.00"
@@ -315,51 +285,32 @@ export default function AdminProductForm() {
           </span>
 
           <select
+            required
             value={form.category}
             onChange={(event) =>
-              updateField(
-                'category',
-                event.target.value
-              )
+              updateField('category', event.target.value)
             }
             className="admin-input"
           >
-            <option value="Electronics">
-              Electronics
+            <option value="">
+              Select category
             </option>
 
-            <option value="Clothing">
-              Clothing
-            </option>
-
-            <option value="Books">
-              Books
-            </option>
-
-            <option value="Home">
-              Home
-            </option>
-
-            <option value="Beauty">
-              Beauty
-            </option>
-
-            <option value="Sports">
-              Sports
-            </option>
-
-            <option value="Shoes">
-              Shoes
-            </option>
-
-            <option value="Ceiling Fan">
-              Ceiling Fan
-            </option>
-
-            <option value="Other">
-              Other
-            </option>
+            {categories.map((category) => (
+              <option
+                key={category._id}
+                value={category.name}
+              >
+                {category.name}
+              </option>
+            ))}
           </select>
+
+          {!categories.length && (
+            <p className="mt-1 text-xs text-red-600">
+              No active categories available. Create a category first.
+            </p>
+          )}
         </label>
 
         <label className="sm:col-span-2">
@@ -401,10 +352,7 @@ export default function AdminProductForm() {
             min="0"
             value={form.stock}
             onChange={(event) =>
-              updateField(
-                'stock',
-                event.target.value
-              )
+              updateField('stock', event.target.value)
             }
             className="admin-input"
           />
@@ -428,7 +376,7 @@ export default function AdminProductForm() {
         <div className="flex gap-3 sm:col-span-2">
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || !categories.length}
             className="btn-primary disabled:opacity-50"
           >
             {saving
