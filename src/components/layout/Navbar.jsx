@@ -170,13 +170,12 @@ export default function Navbar() {
           aria-label="Velmora Home"
         >
           <img
-            src={logo}
-            alt="Velmora"
-            className="h-20 w-auto object-contain"
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-          />
+  src={logo}
+  alt="Velmora"
+  className="h-20 w-auto object-contain"
+  loading="eager"
+  decoding="async"
+/>
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
